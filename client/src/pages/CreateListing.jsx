@@ -114,7 +114,7 @@ export default function CreateListing() {
           />
             <button
               onClick={nextStep}
-              className="p-3 mt-3 bg-blue-500 text-white rounded-lg uppercase"
+              className="p-3 mt-3 bg-teal-700 text-white rounded-lg uppercase"
             >
               Next
             </button>
@@ -142,7 +142,7 @@ export default function CreateListing() {
             </button>
             <button
               onClick={nextStep}
-              className="p-3 mt-3 bg-blue-500 text-white rounded-lg uppercase"
+              className="p-3 mt-3 bg-teal-700 text-white rounded-lg uppercase"
             >
               Next
             </button>
@@ -195,7 +195,7 @@ export default function CreateListing() {
             </button>
             <button
               type="submit"
-              className="p-3 mt-3 bg-blue-500 text-white rounded-lg uppercase"
+              className="p-3 mt-3 bg-teal-700 text-white rounded-lg uppercase"
             >
               Add Product
             </button>
