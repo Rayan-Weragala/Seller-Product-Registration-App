@@ -45,7 +45,8 @@ export default function Signup() {
   };
     return (
         <div className="max-w-lg mx-auto bg-white p-6 rounded-md shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Seller Registration</h2>
+            <h2 className="text-3xl font-semibold text-center
+            my-3">Register</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4 flex">
                     <div className="w-1/2 mr-2">
@@ -72,7 +73,7 @@ export default function Signup() {
 
                 <div className="mb-4">
                     <label htmlFor="email" className="block text-md font-medium">Email</label>
-                    <input type="text" id="email" name="email" className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-cyan-600"  onChange={handleChange}/>
+                    <input type="email" id="email" name="email" className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-cyan-600"  onChange={handleChange}/>
                 </div>
 
                 <div className="mb-4">
@@ -91,7 +92,7 @@ export default function Signup() {
                 </div>
 
                 <div className="mt-6">
-                    <button disabled={loading} className="mt-1 p-2 w-full border border-gray-300 rounded-lg bg-teal-600 text-white uppercase hover:opacity-95 disabled:opacity-80">{loading ? 'Loading...':'Submit'}</button>
+                    <button disabled={loading} className="mt-1 p-2 w-full border border-gray-300 rounded-lg bg-teal-800 text-white uppercase hover:bg-teal-700">{loading ? 'Loading...':'Submit'}</button>
                     <Oauth/>
                 </div>
             </form>
