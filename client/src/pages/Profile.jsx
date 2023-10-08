@@ -3,6 +3,7 @@ import {useRef, useState,useEffect} from 'react'
 import {getDownloadURL, getStorage,ref, uploadBytesResumable} from 'firebase/storage'
 import { app } from '../firebase';
 import {updateUserStart,updateUserFailure,updateUserSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutUserStart} from '../redux/user/userSlice'
+import {Link} from 'react-router-dom';
 
 export default function Profile() {
   const fileRef =useRef(null);
@@ -228,8 +229,11 @@ const handleSignOut = async() =>{
                 </div>
 
                 <div className="mt-6">
-                    <button disabled={loading} className="mt-1 p-2 w-full border border-gray-300 rounded-lg bg-teal-600 text-white uppercase hover:bg-teal-700">{loading ? 'Loading...':'Update'}</button>                    
+                    <button disabled={loading} className="mt-1 p-2 w-full border border-gray-300 rounded-lg bg-teal-700 text-white uppercase hover:bg-teal-600">{loading ? 'Loading...':'Update'}</button>                    
                 </div>
+                <Link className='mt-1 p-2 w-full rounded-lg bg-indigo-900 text-white uppercase text-center hover:bg-indigo-700' to={"/create-listing"}>
+                  Create Listing
+                </Link>
              </form>
              <div className='flex justify-between mt-5'>
               <span onClick={handleDeleteUser} className='text-black  hover:font-bold  cursor-pointer'>Delete Account</span>

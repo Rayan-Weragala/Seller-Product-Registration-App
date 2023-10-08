@@ -30,9 +30,6 @@ const listingSchema =new mongoose.Schema(
             type: Number,
             required: true,
         },
-        available: {
-            type: Boolean,
-        },
         imageUrls: {
             type: Array,
             required: true,
