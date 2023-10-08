@@ -30,6 +30,10 @@ const userSchema =new mongoose.Schema({
         type:String,
         required:true,
     },
+    avatar:{
+        type:String,
+        default:"https://th.bing.com/th/id/OIP.GHGGLYe7gDfZUzF_tElxiQHaHa?w=190&h=190&c=7&r=0&o=5&pid=1.7"
+    },
 },{timeStamps:true});
 
 const User = mongoose.model('User',userSchema);
