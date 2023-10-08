@@ -23,6 +23,9 @@ const userSchema =new mongoose.Schema({
     mobile:{
         type:String,
     },
+    bio:{
+        type:String,
+    },
     password:{
         type:String,
         required:true,

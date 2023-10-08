@@ -3,7 +3,7 @@ import bcryptjs from 'bcryptjs'
 import {errorHandler }from '../utils/error.js'
 
 export const signup = async (req, res,next) => {
-    const { firstname, lastname, username, email, address, mobile, password } = req.body;
+    const { firstname, lastname, username, email, address, mobile, password,bio } = req.body;
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const newUser = new User({
       firstname,
@@ -12,6 +12,7 @@ export const signup = async (req, res,next) => {
       email,
       address,
       mobile,
+      bio,
       password: hashedPassword,
     });
     try{
