@@ -44,7 +44,7 @@ export default function Signup() {
   };
     return (
         <div className="max-w-lg mx-auto bg-white p-6 rounded-md shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">User Profile</h2>
+            <h2 className="text-2xl font-semibold mb-4">Seller Registration</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4 flex">
                     <div className="w-1/2 mr-2">
