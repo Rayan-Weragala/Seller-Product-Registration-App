@@ -2,7 +2,8 @@ import { useState } from 'react';
 import {getDownloadURL,ref,getStorage,uploadBytesResumable} from 'firebase/storage'
 import{app} from '../firebase'
 import {useSelector} from 'react-redux'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate,useParams} from 'react-router-dom'
+import { useEffect } from 'react';
 
 export default function CreateListing() {
 
@@ -12,6 +13,7 @@ export default function CreateListing() {
   const [loading,setLoading] =useState(false)
   const {curruntUser} =useSelector(state =>state.user)
   const navigate = useNavigate();
+  const params =useParams();
   const options = [
     { value: '1', label: 'Paintings' },
     { value: '2', label: 'Sculptures' },
@@ -54,10 +56,23 @@ export default function CreateListing() {
     depth: '',
     stock: '',
   })
-  console.log(formData)
+  
   const [imageUploadError,setimageUploadError]=useState(false);
   const[uploading,setuploading] =useState(false);
 
+  useEffect(()=>{
+    const fetchListing =async ()=>{
+        const listingId = params.listingId;
+        const res = await fetch(`/api/listing/get/${listingId}`)
+        const data = await res.json();
+        if(data.success===false){
+            console.log(data.message);
+            return;
+        }
+        setFormData(data);
+    }
+    fetchListing();
+  },[]);
 
   const handleImageSubmit = (e)=>{
     if(files.length>0 && files.length+formData.imageUrls.length <7){
@@ -133,7 +148,7 @@ export default function CreateListing() {
     if(+formData.price< +formData.discount) return setError('Discount price must be lower than regular price')
     setLoading(true)
     setError(true)
-    const res = await fetch ('/api/listing/create',{
+    const res = await fetch (`/api/listing/update/${params.listingId}`,{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -157,8 +172,8 @@ export default function CreateListing() {
  }
   return (
     <main className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-4">Add a New Product</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <h1 className="text-3xl font-semibold text-center my-4">Update Product</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4" >
         {step === 1 && (
           <div className="border rounded-lg  p-4">
             <h2 className="text-xl font-semibold">Product Details</h2>
@@ -384,3 +399,4 @@ export default function CreateListing() {
     </main>
   );
 }
+
