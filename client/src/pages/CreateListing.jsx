@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import {getDownloadURL,ref,getStorage,uploadBytesResumable} from 'firebase/storage'
 import{app} from '../firebase'
+import {useSelector} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
+
 export default function CreateListing() {
 
   const [step, setStep] = useState(1);
   const [selectedOption, setSelectedOption] = useState('');
-
+  const [error,setError] = useState(false)
+  const [loading,setLoading] =useState(false)
+  const {curruntUser} =useSelector(state =>state.user)
+  const navigate = useNavigate();
   const options = [
     { value: '1', label: 'Paintings' },
     { value: '2', label: 'Sculptures' },
@@ -23,6 +29,7 @@ export default function CreateListing() {
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
+    setFormData({ ...formData, category: event.target.value });
   };
 
   const nextStep = () => {
@@ -33,14 +40,21 @@ export default function CreateListing() {
     setStep(step - 1);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here
-  };
   const [files,setFiles] = useState([])
   const [formData,setFormData]=useState({
     imageUrls:[],
+    name:'',
+    description:'',
+    materials: '',
+    category: '',
+    price: 50,
+    discount:'0',
+    height: '',
+    width: '',
+    depth: '',
+    stock: '',
   })
+  console.log(formData)
   const [imageUploadError,setimageUploadError]=useState(false);
   const[uploading,setuploading] =useState(false);
 
@@ -97,11 +111,54 @@ export default function CreateListing() {
     imageUrls:formData.imageUrls.filter((_,i)=>i!==index),
   })
  }
-  console.log(files)
+  
+ const handleChange = (e) => {
+  if (e.target.type === 'number' || e.target.type === 'text' || e.target.type === 'textarea') {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  } else if (e.target.type === 'checkbox') {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.checked,
+    });
+  }
+};
+
+ const handleSubmit = async (e)=>{
+  e.preventDefault();
+  try{
+    if(formData.imageUrls.length<1) return setError('You must upload at least one image!')
+    if(+formData.price< +formData.discount) return setError('Discount price must be lower than regular price')
+    setLoading(true)
+    setError(true)
+    const res = await fetch ('/api/listing/create',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+      },
+      body:JSON.stringify({
+        ...formData,
+        userRef:curruntUser._id,
+      }),
+    });
+    const data = await res.json();
+    setLoading(false)
+    if(data.success ===false){
+      setError(data.message)
+    }
+    navigate(`/listing/${data._id}`);
+  }catch(error){
+    setError(error.message)
+    setLoading(false);
+   
+  }
+ }
   return (
     <main className="p-6 max-w-2xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-4">Add a New Product</h1>
-      <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4" onSubmit={handleSubmit}>
         {step === 1 && (
           <div className="border rounded-lg  p-4">
             <h2 className="text-xl font-semibold">Product Details</h2>
@@ -115,16 +172,19 @@ export default function CreateListing() {
             maxLength="60"
             minLength="10"
             required
+            onChange={handleChange}
+            value={formData.name}
           />
 
           <label htmlFor="description" className="block text-slate-950 mt-4">
             Product Description:
           </label>
           <textarea
-            type="text"
             className="border p-2 rounded-lg w-full"
             id="description"
             required
+            onChange={handleChange}
+            value={formData.description}
           />
 
           <label htmlFor="materials" className="block text-slate-950 mt-4">
@@ -135,6 +195,8 @@ export default function CreateListing() {
             className="border p-2 rounded-lg w-full"
             id="materials"
             required
+            onChange={handleChange}
+            value={formData.materials}
           />
 
           <label htmlFor="dropdown" className="block text-slate-950 mt-4">
@@ -155,25 +217,57 @@ export default function CreateListing() {
             ))}
           </select>
 
+          <label htmlFor="offer" className="block text-slate-950 mt-4">
+              Offer:
+            </label>
+            <input
+              type="checkbox"
+              id="offer"
+              onChange={handleChange}
+              checked={formData.offer}
+            />
           <label htmlFor="price" className="block text-slate-950 mt-4">
-            Product Price:
+            Regular Price:
           </label>
           <input
             type="number"
             className="border p-2 rounded-lg w-full"
             id="price"
+            min='50'
+            max='5000'
             required
+            onChange={handleChange}
+            value={formData.price}
           />
-
+          {formData.offer && (
+            <div>
+              <label htmlFor="price" className="block text-slate-950 mt-4">
+              Discounted Price:
+              </label>
+              <input
+              type="number"
+              className="border p-2 rounded-lg w-full"
+              id="discount"
+              min='0'
+              max='5000'
+              required
+              onChange={handleChange}
+              value={formData.discount}
+              />
+              </div>
+          )}
+        
           <label htmlFor="stock" className="block text-slate-950 mt-4">
-            Stock Number:
+          Stock Number:
           </label>
           <input
-            type="number"
-            className="border p-2 rounded-lg w-full"
-            id="stock"
-            required
-          />
+          type="number"
+          className="border p-2 rounded-lg w-full"
+          id="stock"
+          required
+          onChange={handleChange}
+          value={formData.stock}
+        />
             <button
               onClick={nextStep}
               className="p-3 mt-3 bg-teal-700 text-white rounded-lg uppercase"
@@ -195,7 +289,7 @@ export default function CreateListing() {
             accept="image/*"
             multiple
           />
-          <button type='button' disabled={uploading} onClick={handleImageSubmit} className='p-3 text-black uppercase underline rounded-lg font-bold'>{uploading ? 'Uploading...':'Upload'}</button>
+          <button type='button' disabled={uploading} onClick={handleImageSubmit} className='p-3 text-black uppercase hover:underline rounded-lg font-bold'>{uploading ? 'Uploading...':'Upload'}</button>
           <p className='text-red-700 text-sm'>{imageUploadError && imageUploadError}</p>
           {
           formData.imageUrls.length > 0 && formData.imageUrls.map((url, index) => (
@@ -239,6 +333,8 @@ export default function CreateListing() {
                 max="10"
                 required
                 className="border p-2 rounded-lg w-1/2"
+                onChange={handleChange}
+                value={formData.height}
               />
               <p>Height (inches)</p>
             </div>
@@ -250,6 +346,8 @@ export default function CreateListing() {
                 max="10"
                 required
                 className="border p-2 rounded-lg w-1/2"
+                onChange={handleChange}
+                value={formData.width}
               />
               <p>Width (inches)</p>
             </div>
@@ -261,6 +359,8 @@ export default function CreateListing() {
                 max="10"
                 required
                 className="border p-2 rounded-lg w-1/2"
+                onChange={handleChange}
+                value={formData.depth}
               />
               <p>Depth (inches)</p>
             </div>
@@ -271,12 +371,13 @@ export default function CreateListing() {
             >
               Previous
             </button>
-            <button
+            <button disabled={loading ||uploading}
               type="submit"
               className="p-3 mt-3 bg-teal-700 text-white rounded-lg uppercase"
             >
-              Add Product
+              {loading ? 'Adding...':'Add product'}
             </button>
+            {error && <p className='text-red-700 tex-sm'>{error}</p>}
           </div>
         )}
       </form>

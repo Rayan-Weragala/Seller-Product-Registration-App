@@ -16,6 +16,11 @@ const listingSchema =new mongoose.Schema(
             required: true,
             min: 0,
         },
+        discount:{
+            type:Number,
+            required:true,
+            min:0,
+        },
         category: {
             type: String,
             required: true,
@@ -38,6 +43,10 @@ const listingSchema =new mongoose.Schema(
             type:String,
             required:true,
         },
+        offer:{
+            type:Boolean,
+            
+        }
     },{timestamps:true}
 )
 
