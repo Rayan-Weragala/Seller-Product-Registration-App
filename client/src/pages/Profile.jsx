@@ -122,8 +122,25 @@ const handleShowListings = async() =>{
     showListingsError(true)
   }
 }
+const handleListingDelete = async (listingId)=>{
+  try{
+    const res = await fetch(`/api/listing/delete/${listingId}`,{
+      method:'DELETE',
+    });
+    const data = await res.json();
+    if(data.success === false){
+      console.log(data.message)
+      return;
+    }
+    setuserListings((prev)=>
+    prev.filter((listing)=>listing._id !==listingId)
+    );
+  }catch(error){
+    console.log(error.message)
+  }
+}
   return (
-        <div className="max-w-lg mx-auto bg-white p-6 rounded-md shadow-md">
+        <div className="max-w-2xl mx-auto bg-white p-6 rounded-md shadow-md">
           <h2 className="text-3xl font-semibold text-center
           my-3">My Profile</h2>
           <form onSubmit={handleSubmit} className='flex flex-col'>
@@ -250,7 +267,7 @@ const handleShowListings = async() =>{
 
              </div>
              <p className='text-red-700 mt-5'>{error ? error: ''}</p>
-             <p className='text-green-700 mt-5'>{updateSuccsess ? 'User is updated successfully!':''}</p>
+             <p className='text-green-700 text-bold mt-5'>{updateSuccsess ? 'User is updated successfully!':''}</p>
              <button onClick={handleShowListings} className='text-black hover:font-bold w-full'>Show Listings</button>
              <p className='text-red-700 mt-5'>{showListingsError ?'Error showing listings':''}</p>
              
@@ -283,7 +300,7 @@ const handleShowListings = async() =>{
               </Link>
 
               <div className='flex flex-col item-center'>
-              <button className='text-teal-700 hover:font-bold 
+              <button onClick={(()=>handleListingDelete(listing._id))} className='text-teal-700 hover:font-bold 
               uppercase'>Delete</button>
               <button className='text-indigo-700 hover:font-bold 
               uppercase'>edit</button>
