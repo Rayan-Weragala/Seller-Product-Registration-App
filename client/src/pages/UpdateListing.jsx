@@ -390,7 +390,7 @@ export default function CreateListing() {
               type="submit"
               className="p-3 mt-3 bg-teal-700 text-white rounded-lg uppercase"
             >
-              {loading ? 'Adding...':'Add product'}
+              {loading ? 'Updating...':'Update product'}
             </button>
             {error && <p className='text-red-700 tex-sm'>{error}</p>}
           </div>

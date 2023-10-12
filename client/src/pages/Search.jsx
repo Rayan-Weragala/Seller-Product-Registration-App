@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react"
 import {useNavigate} from 'react-router-dom'
+import Listingitem from "../components/Listingitem";
 
 export default function Search() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export default function Search() {
       setLoading(true)
       const searchQuery = urlParams.toString();
       const res= await fetch(`/api/listing/get?${searchQuery}`)
-      const data = res.json();
+      const data =await res.json();
       setListings(data);
       setLoading(false);
     }
@@ -56,13 +57,12 @@ export default function Search() {
       setsidebardata({...sidebardata,[e.target.id]:e.target.checked||e.target.checked==='true' ?
     true:false})
     }
-    if(e.target.id ==='sort_order'){
-      const sort = e.target.value.split('_')[0] || 'created_at';
-      const order = e.target.value.split('_')[1] || 'desc';
-
-      setsidebardata({...sidebardata,sort,order})
-
+    if (e.target.id === 'sort_order') {
+      const sort_order = e.target.value;
+      const [sort, order] = sort_order.split('_');
+      setsidebardata({ ...sidebardata, sort, order });
     }
+    
   };
 
   const handleSubmit = (e) => {
@@ -121,9 +121,22 @@ export default function Search() {
             p-3 rounded-lg uppercase text-black hover:bg-amber-600">Search</button>
         </form>
       </div>
-      <div className=''>
+      <div className='flex-1'>
         <h1 className="text-3xl font-semibold 
         border-b p-3 text-slate-800 mt-5">Listing results:</h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {!loading && listings.length === 0 &&(
+            <p className="text-xl text-slate-700">No listing found!</p>
+          )}
+          {loading &&(
+            <p className="text-xl text-slate-700 w-full">Loading....</p>
+          )}
+          {!loading && 
+          listings && 
+          listings.map((listing)=>(
+            <Listingitem key={listing._id} listing={listing} />
+             ))}
+        </div>
       </div>
     </div>
   )
