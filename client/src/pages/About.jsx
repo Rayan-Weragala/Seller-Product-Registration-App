@@ -1,4 +1,4 @@
-
+import image from './LOGO.jpg'
 export default function About() {
   return (
     <div className="py-20 px-4 max-w-6xl mx-auto">
@@ -22,6 +22,12 @@ export default function About() {
         oin us on a journey to discover, support, and embrace the incredible world of artisanal craftsmanship. 
         ArtiCraft is where art, culture, and community converge, and we invite you to be a part of this extraordinary experience.
         </p>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+          <div className='rounded-full h-100 w-100 mt-2'>
+          <img src={image} />
+          </div>
+        </div>
     </div>
   )
 }
