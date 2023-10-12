@@ -53,7 +53,7 @@ export default function Header() {
                 <li className='hidden sm:inline text-black font-medium hover:font-bold'>Home</li>
                 </Link>
                 <Link to='about'>
-                <li className='hidden sm:inline text-black font-medium hover:font-bold'>About</li>
+                <li className='hidden sm:inline text-black font-medium hover:font-bold'>About us</li>
                 </Link>
                 <Link to='/profile'>
                 {curruntUser ? (
