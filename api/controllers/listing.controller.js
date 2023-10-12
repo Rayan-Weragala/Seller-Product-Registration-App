@@ -77,7 +77,7 @@ export const getListings =async (req,res,next)=>{
 
         const listings = await Listing.find({
             name:{$regex:searchTerm,$options:'i'},
-            offer
+            offer,
         }).sort(
             {[sort]:order}
         ).limit(limit).skip(startIndex);

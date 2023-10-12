@@ -35,7 +35,7 @@ export default function Listingitem({listing}) {
          <p className='text-slate-500 mt-2 font-semibold'>
           Rs. {listing.offer ? listing.
           discount.toLocaleString('en-US'):listing.
-          discount.toLocaleString('en-US')}
+          price.toLocaleString('en-US')}
          </p>
          <div className='text-sm font-semibold'>
           Dimension: ({listing.height} x {listing.width} x {listing.depth} )cm³ 
