@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux'
 export default function Header() {
     const {curruntUser} =useSelector(state =>state.user)
   return (
-    <header className='bg-green-400 shadow-md'>
+    <header className='bg-teal-600 shadow-md'>
         <div className='flex justify-between items-center max-w-6xl mx-auto p-4'>
             <Link to='/'>
             <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>

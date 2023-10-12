@@ -2,12 +2,18 @@ import { useEffect, useState } from "react"
 import {useParams} from 'react-router-dom'
 import {Swiper,SwiperSlide} from 'swiper/react';
 import SwiperCore from 'swiper';
+import {useSelector} from 'react-redux';
 import {Navigation} from 'swiper/modules';
 import 'swiper/css/bundle'
 import {FaShare} from 'react-icons/fa';
 import {BiSolidCategory,BiLayer} from 'react-icons/bi'
 import {MdHeight,MdProductionQuantityLimits} from 'react-icons/md'
 import {RxWidth} from 'react-icons/rx'
+import {BsPaletteFill} from 'react-icons/bs'
+import Contact from "../components/Contact";
+
+
+
 
 export default function Listing() {
     SwiperCore.use([Navigation])
@@ -15,7 +21,9 @@ export default function Listing() {
     const [loading,setLoading]= useState(false)
     const [error,setError] = useState(false)
     const [copied, setCopied] = useState(false);
+    const [contact,setContact] = useState(false)
     const params =useParams();
+    const {curruntUser} = useSelector((state)=>state.user);
     
     useEffect(()=>{
         const fetchListing = async()=>{
@@ -104,25 +112,31 @@ export default function Listing() {
             </p>
               )}
               <div className='flex flex-col max-w-4xl mx-auto p-3 my-7 gap-4'>
-                <p className="text-2xl font-semibold">
+                <p className="text-2xl font-bold">
                     {listing.name}- Rs{' '}
                     {listing.discount
                         ?listing.discount.toLocaleString('en-US')
                         :listing.price.toLocaleString('en-US')}
                 </p>
-                <p className="flex items-center mt-2 gap-2 text-green-900 text-lg">              
+                <div className="flex flex-wrap gap-4 sm:gap-6">
+                <p className="flex items-center mt-2 gap-2 text-black text-lg">              
                     <BiSolidCategory className="text-greeb-700"/>   
                     {categoryMapping[listing.category]}
                 </p>
+                <p className="flex items-center mt-2 gap-2 text-black text-lg">              
+                    <BsPaletteFill className="text-greeb-700"/>   
+                    {listing.materials}
+                </p>
+                </div>
                 <div className="flex gap-4">
-                <p className='bg-indigo-900 w-full max-w-[200px]
-                 text-white text-center p-1 rounded-md'>
+                <p className='bg-amber-400 w-full max-w-[200px]
+                 text-black text-center p-1 rounded-md'>
                   for sale
                 </p>
                 {
                   listing.discount &&(
-                    <p className="bg-emerald-800 w-full max-w-[200px] text-white
-                     text-center p-1 rounded-md">Rs {+listing.price - +listing.discount}</p>
+                    <p className="bg-amber-600 w-full max-w-[200px] text-white
+                     text-center p-1 rounded-md">Rs {+listing.price - +listing.discount} off</p>
                   )
                 }
                 </div>
@@ -130,7 +144,7 @@ export default function Listing() {
                 <span className="font-semibold text-black">Description -{''} </span>
                 {listing.description}
                 </p>
-                <ul className=" text-green-900 font-semibold text-lg flex flex-wrap 
+                <ul className=" text-black font-semibold text-lg flex flex-wrap 
                 items-center gap-4 sm:gap-6">
                   <li className="flex items-center gap-1 whitespace-nowrap">
                     <MdHeight className="text-xl" />
@@ -149,8 +163,16 @@ export default function Listing() {
                     {listing.width}
                   </li>
                 </ul>
-              </div>
+                {curruntUser && listing.userRef !==curruntUser._id 
+                && !contact &&
+                (
 
+                  <button onClick={()=>setContact(true)} className="bg-red-600 text-white 
+                rounded-lg uppercase p-2  hover:bg-red-500">Contact Seller</button>
+                )} 
+                {contact && <Contact listing={listing} />}
+              </div>
+              
             </div>
           )}
         </main>
