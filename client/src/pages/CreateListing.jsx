@@ -51,6 +51,7 @@ export default function CreateListing() {
     discount:'0',
     height: '',
     width: '',
+    offer:false,
     depth: '',
     stock: '',
   })
