@@ -4,6 +4,8 @@ import {getDownloadURL, getStorage,ref, uploadBytesResumable} from 'firebase/sto
 import { app } from '../firebase';
 import {updateUserStart,updateUserFailure,updateUserSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutUserStart} from '../redux/user/userSlice'
 import {Link} from 'react-router-dom';
+//import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf'; 
 
 export default function Profile() {
   const fileRef =useRef(null);
@@ -139,6 +141,54 @@ const handleListingDelete = async (listingId)=>{
     console.log(error.message)
   }
 }
+
+
+
+const handlePdfGeneration = () => {
+  const doc = new jsPDF();
+  let pageHeight = doc.internal.pageSize.height;
+  let y = 20; // Initial Y position
+
+  const pageMargins = 20;
+  const lineSpacing = 6;
+
+  // Add a title for the report
+  doc.setFontSize(16); // Larger font for the title
+  doc.text('Your Listing Data', pageMargins, y);
+  y += lineSpacing; // Move down for the content
+
+  userListings.forEach((listing, index) => {
+    const listingContent = `Listing Name: ${listing.name}\nDescription: ${listing.description}\nPrice: ${listing.price}\nDimension: ${listing.height} x ${listing.width} x ${listing.depth}\nAdded date: ${listing.createdAt} `;
+
+    const splitContent = doc.splitTextToSize(listingContent, doc.internal.pageSize.width - 2 * pageMargins);
+    const contentHeight = splitContent.length * lineSpacing;
+
+    if (y + contentHeight > pageHeight) {
+      doc.addPage();
+      y = pageMargins;
+    }
+
+    if (index !== 0) {
+      y += lineSpacing; // Adjust the Y position to separate listings
+    }
+
+    doc.setFontSize(12); // Smaller font for content
+    doc.text(pageMargins, y, splitContent);
+    y += contentHeight + lineSpacing;
+  });
+
+  // Add page numbers
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.text(180, pageHeight - 10, `Page ${i} of ${pageCount}`);
+  }
+
+  doc.save('listing_report.pdf');
+};
+
+
+
   return (
         <div className="max-w-2xl mx-auto bg-white p-6 rounded-md shadow-md">
           <h2 className="text-3xl font-semibold text-center
@@ -263,6 +313,9 @@ const handleListingDelete = async (listingId)=>{
              </form>
              <div className='flex justify-between mt-5'>
               <span onClick={handleDeleteUser} className='text-black  hover:font-bold  cursor-pointer'>Delete Account</span>
+
+              
+
               <span onClick={handleSignOut} className='text-black  hover:font-bold cursor-pointer'>Sign out</span>
 
              </div>
@@ -277,6 +330,14 @@ const handleListingDelete = async (listingId)=>{
                 <div className='flex flex-col gap-4'>
               <h1 className='text-center  mt-7
               text-3xl font-semibold'>Your Listings</h1>
+
+             <div className='flex self-center'>
+             <button onClick={handlePdfGeneration} className='bg-violet-900 border-gray-300 rounded-lg text-white mt-1 p-1 hover:bg-violet-600 border w-100 h-10'>
+                Generate Report
+              </button>
+              </div>
+
+
               {userListings.map((listing)=> (
              <div key={listing._id} 
              className='border rounded-lg
